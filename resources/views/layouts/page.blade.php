@@ -6,7 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>@yield('title', config('app.name', 'Calndr'))</title>
+  <title>Calndr by Inisiator</title>
+  <link rel="icon" href="{{ asset('assets/img/profpic.svg') }}">
+
   <meta name="description" content="@yield('meta_description', 'Schedule meetings easily with Calndr.')">
   <meta name="keywords" content="@yield('meta_keywords', 'Calndr, Schedule, Appointment, Booking')">
   <meta property="og:image" content="@yield('meta_image', asset('assets/img/landing/default-og.jpg'))">
