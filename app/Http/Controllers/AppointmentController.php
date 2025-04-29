@@ -61,18 +61,40 @@ class AppointmentController extends Controller
             ->first();
 
         if (!$slot) {
-            return redirect()->route('appointments.selectSlot')->withErrors(['date_time' => 'Selected slot is no longer available.']);
+            return redirect()->route('appointments.selectSlot')
+                ->withErrors(['date_time' => 'Selected slot is no longer available.']);
         }
 
-        // $duplicate = Appointment::where('phone', $validated['phone'])
-        //     ->where('email', $validated['email'])
-        //     ->where('slot_id', $slot->id)
-        //     ->first();
+        $event = $slot->event;
 
-        // if ($duplicate) {
-        //     return redirect()->route('appointments.show', $duplicate)->with('info', 'You have already booked this slot.');
-        // }
+        // Cek duplicate appointment
+        $duplicate = Appointment::where('phone', $validated['phone'])
+            ->where('email', $validated['email'])
+            ->where('slot_id', $slot->id)
+            ->first();
 
+        $appointment = $duplicate;
+
+        if ($duplicate) {
+            // ✅ Kirim ulang confirmation link
+            $confirmationLink = route('appointments.show', $duplicate);
+
+            if ($event && $event->url) {
+                try {
+                    Http::post($event->url, [
+                        'phone' => $duplicate->phone,
+                        'link' => $confirmationLink,
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Gagal kirim link konfirmasi ke Aplikasi B (duplicate): ' . $e->getMessage());
+                }
+            }
+
+            return redirect()->route('appointments.show', $duplicate)
+                ->with('info', 'You have already booked this slot. Confirmation link has been resent.');
+        }
+
+        // ✅ Buat appointment baru jika belum ada
         $appointment = Appointment::create([
             'name' => $validated['name'],
             'phone' => $validated['phone'],
@@ -86,7 +108,6 @@ class AppointmentController extends Controller
         session()->forget('selected_slot_time');
 
         // ✅ Kirim Booking Link ke Aplikasi B
-        $event = $slot->event;
         $confirmationLink = route('appointments.show', $appointment);
 
         if ($event && $event->url) {
@@ -96,11 +117,12 @@ class AppointmentController extends Controller
                     'link' => $confirmationLink,
                 ]);
             } catch (\Exception $e) {
-                Log::error('Gagal kirim link konfirmasi ke Aplikasi B: ' . $e->getMessage());
+                Log::error('Gagal kirim link konfirmasi ke Aplikasi B (baru): ' . $e->getMessage());
             }
         }
 
-        return redirect()->route('appointments.show', $appointment)->with('success', 'Appointment created successfully.');
+        return redirect()->route('appointments.show', $appointment)
+            ->with('success', 'Appointment created successfully.');
     }
 
     public function show(Appointment $appointment)

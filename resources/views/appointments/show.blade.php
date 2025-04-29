@@ -4,6 +4,25 @@
   <div class="max-w-2xl mx-auto py-10">
     <h1 class="text-2xl font-bold mb-6">Appointment Details</h1>
 
+    {{-- ✅ Alert Message --}}
+    @if (session('success'))
+      <div class="mb-4 p-4 bg-green-100 text-green-800 rounded border border-green-300">
+        {{ session('success') }}
+      </div>
+    @elseif (session('info'))
+      <div class="mb-4 p-4 bg-blue-100 text-blue-800 rounded border border-blue-300">
+        {{ session('info') }}
+      </div>
+    @elseif ($errors->any())
+      <div class="mb-4 p-4 bg-red-100 text-red-800 rounded border border-red-300">
+        <ul class="list-disc pl-5">
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
     <div class="bg-white shadow rounded p-6 space-y-4">
       <div>
         <strong>Name:</strong> {{ $appointment->name }}
