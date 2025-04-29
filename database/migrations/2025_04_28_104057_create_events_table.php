@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('pin_code')->nullable();
             $table->boolean('is_login_required')->default(false);
+            $table->string('url')->nullable();
             $table->timestamps();
         });
     }

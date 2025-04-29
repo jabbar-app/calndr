@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Slot;
+use App\Models\User;
 use App\Models\Event;
 use App\Models\Appointment;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class AppointmentController extends Controller
 {
@@ -54,7 +56,7 @@ class AppointmentController extends Controller
             'date_time' => 'required|date',
         ]);
 
-        $slot = \App\Models\Slot::where('slot_time', $validated['date_time'])
+        $slot = Slot::where('slot_time', $validated['date_time'])
             ->where('quota', '>', 0)
             ->first();
 
@@ -62,18 +64,16 @@ class AppointmentController extends Controller
             return redirect()->route('appointments.selectSlot')->withErrors(['date_time' => 'Selected slot is no longer available.']);
         }
 
-        // Cek duplicate appointment
-        $duplicate = \App\Models\Appointment::where('phone', $validated['phone'])
-            ->where('email', $validated['email'])
-            ->where('slot_id', $slot->id)
-            ->first();
+        // $duplicate = Appointment::where('phone', $validated['phone'])
+        //     ->where('email', $validated['email'])
+        //     ->where('slot_id', $slot->id)
+        //     ->first();
 
-        if ($duplicate) {
-            return redirect()->route('appointments.show', $duplicate)->with('info', 'You have already booked this slot.');
-        }
+        // if ($duplicate) {
+        //     return redirect()->route('appointments.show', $duplicate)->with('info', 'You have already booked this slot.');
+        // }
 
-        // Create appointment with event_id and slot_id
-        $appointment = \App\Models\Appointment::create([
+        $appointment = Appointment::create([
             'name' => $validated['name'],
             'phone' => $validated['phone'],
             'email' => $validated['email'],
@@ -83,12 +83,25 @@ class AppointmentController extends Controller
         ]);
 
         $slot->decrement('quota');
-
         session()->forget('selected_slot_time');
+
+        // ✅ Kirim Booking Link ke Aplikasi B
+        $event = $slot->event;
+        $confirmationLink = route('appointments.show', $appointment);
+
+        if ($event && $event->url) {
+            try {
+                Http::post($event->url, [
+                    'phone' => $appointment->phone,
+                    'link' => $confirmationLink,
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Gagal kirim link konfirmasi ke Aplikasi B: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('appointments.show', $appointment)->with('success', 'Appointment created successfully.');
     }
-
 
     public function show(Appointment $appointment)
     {
@@ -100,7 +113,7 @@ class AppointmentController extends Controller
         return view('appointments.edit', compact('appointment'));
     }
 
-    public function update(Request $request, \App\Models\Appointment $appointment)
+    public function update(Request $request, Appointment $appointment)
     {
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
@@ -109,7 +122,7 @@ class AppointmentController extends Controller
             'date_time' => 'required|date',
         ]);
 
-        $slot = \App\Models\Slot::where('slot_time', $validated['date_time'])
+        $slot = Slot::where('slot_time', $validated['date_time'])
             ->first();
 
         if (!$slot) {
