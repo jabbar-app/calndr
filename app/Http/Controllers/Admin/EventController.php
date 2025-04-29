@@ -32,6 +32,7 @@ class EventController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'url' => 'nullable|url',
             'is_login_required' => 'boolean',
             'pin_code' => 'nullable|string|max:10',
         ]);
@@ -53,6 +54,7 @@ class EventController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'url' => 'nullable|url',
             'is_login_required' => 'boolean',
             'pin_code' => 'nullable|string|max:10',
         ]);
