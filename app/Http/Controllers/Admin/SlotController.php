@@ -34,6 +34,14 @@ class SlotController extends Controller
         return redirect()->route('slots.index')->with('success', 'Slot created successfully.');
     }
 
+    public function show(Slot $slot)
+    {
+        $slot->load(['event', 'appointments']);
+
+        return view('admin.slots.show', compact('slot'));
+    }
+
+
     public function edit(Slot $slot)
     {
         $events = Event::all();

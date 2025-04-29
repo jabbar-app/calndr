@@ -160,14 +160,14 @@ class AppointmentController extends Controller
             'event_id' => $slot->event_id,
         ]);
 
-        return redirect()->route('appointments.index')->with('success', 'Appointment updated successfully.');
+        return redirect()->back()->with('success', 'Appointment updated successfully.');
     }
 
     public function destroy(Appointment $appointment)
     {
         $appointment->delete();
 
-        return redirect()->route('appointments.index')->with('success', 'Appointment deleted successfully.');
+        return redirect()->back()->with('success', 'Appointment deleted successfully.');
     }
 
     public function selectSlot(Request $request)

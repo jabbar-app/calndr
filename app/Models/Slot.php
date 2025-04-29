@@ -15,4 +15,9 @@ class Slot extends Model
     {
         return $this->belongsTo(Event::class);
     }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 }

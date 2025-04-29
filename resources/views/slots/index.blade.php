@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-  <div class="max-w-7xl mx-auto py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:p-8">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold">Manage Slots</h1>
       <a href="{{ route('slots.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create

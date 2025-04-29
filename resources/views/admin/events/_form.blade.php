@@ -9,8 +9,9 @@
 </div>
 
 <div>
-  <label class="block text-gray-700 font-semibold">Description</label>
-  <textarea name="description" class="w-full mt-1 p-3 border rounded" rows="4">{{ old('description', $event->description ?? '') }}</textarea>
+  <label class="block text-gray-700 font-semibold mb-1">Description</label>
+  <input id="description" type="hidden" name="description" value="{{ old('description', $event->description ?? '') }}">
+  <trix-editor input="description" class="trix-content bg-white p-3 border rounded"></trix-editor>
 </div>
 
 <div>
@@ -40,3 +41,23 @@
     Save Event
   </button>
 </div>
+
+@push('styles')
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trix@2.1.13/dist/trix.min.css">
+
+  <style>
+    trix-toolbar [data-trix-button-group="file-tools"] {
+      display: none !important;
+    }
+  </style>
+@endpush
+
+@push('scripts')
+  <script src="https://cdn.jsdelivr.net/npm/trix@2.1.13/dist/trix.umd.min.js"></script>
+
+  <script>
+    document.addEventListener("trix-file-accept", function(event) {
+      event.preventDefault(); // Disable attachment
+    });
+  </script>
+@endpush

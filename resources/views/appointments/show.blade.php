@@ -24,14 +24,21 @@
     @endif
 
     <div class="bg-white shadow rounded p-6 space-y-4">
+      <h1 class="font-bold text-2xl mb-2">
+        {{ $appointment->event->title }}
+      </h1>
+      <p class="text-gray-700 text-base">
+        <strong>Detail Event:</strong>
+        {!! autolink($appointment->event->description) !!}
+      </p>
       <div>
         <strong>Name:</strong> {{ $appointment->name }}
       </div>
       <div>
-        <strong>Phone:</strong> {{ $appointment->phone }}
+        <strong>Phone:</strong> {{ blur_phone($appointment->phone) }}
       </div>
       <div>
-        <strong>Email:</strong> {{ $appointment->email }}
+        <strong>Email:</strong> {{ blur_email($appointment->email) }}
       </div>
       <div>
         <strong>Date & Time:</strong> {{ \Carbon\Carbon::parse($appointment->date_time)->format('l, d M Y H:i') }}

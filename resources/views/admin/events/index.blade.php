@@ -22,8 +22,7 @@
     </form>
 
     <div class="bg-white shadow rounded-lg overflow-hidden">
-
-      <table class="min-w-full">
+      <table class="w-full">
         <thead class="bg-gray-100">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
@@ -49,6 +48,9 @@
               </td>
               <td class="px-6 py-4 flex space-x-2">
                 <a href="{{ route('events.edit', $event) }}" class="text-yellow-500 hover:underline">Edit</a>
+
+                <a href="{{ route('events.detail', $event) }}" class="text-blue-600 hover:underline">Lihat Detail</a>
+
                 <form action="{{ route('events.destroy', $event) }}" method="POST"
                   onsubmit="return confirm('Are you sure?');">
                   @csrf
