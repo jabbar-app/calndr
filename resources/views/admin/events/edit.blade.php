@@ -6,7 +6,7 @@
 
     <form id="edit-event-form" action="{{ route('events.update', $event) }}" method="POST" class="space-y-6">
       @method('PUT')
-      @include('events._form', ['event' => $event])
+      @include('admin.events._form', ['event' => $event])
     </form>
   </div>
 @endsection

@@ -5,7 +5,7 @@
     <h1 class="text-3xl font-bold mb-6">Create Event</h1>
 
     <form id="create-event-form" action="{{ route('events.store') }}" method="POST" class="space-y-6">
-      @include('events._form')
+      @include('admin.events._form')
     </form>
   </div>
 @endsection
