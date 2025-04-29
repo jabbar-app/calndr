@@ -4,33 +4,24 @@
   <div class="max-w-2xl mx-auto py-10">
     <h1 class="text-3xl font-bold mb-6">Edit Event</h1>
 
-    <form action="{{ route('events.update', $event) }}" method="POST" class="space-y-6">
-      @csrf
+    <form id="edit-event-form" action="{{ route('events.update', $event) }}" method="POST" class="space-y-6">
       @method('PUT')
-
-      <div>
-        <label class="block text-gray-700">Title</label>
-        <input type="text" name="title" value="{{ old('title', $event->title) }}" class="w-full mt-1 p-2 border rounded"
-          required>
-      </div>
-
-      <div>
-        <label class="block text-gray-700">Description</label>
-        <textarea name="description" class="w-full mt-1 p-2 border rounded" rows="4">{{ old('description', $event->description) }}</textarea>
-      </div>
-
-      <div>
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" name="is_login_required" value="1" {{ $event->is_login_required ? 'checked' : '' }}>
-          <span class="text-gray-700">Require Login to Book Slot</span>
-        </label>
-      </div>
-
-      <div class="flex justify-end">
-        <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-          Update
-        </button>
-      </div>
+      @include('events._form', ['event' => $event])
     </form>
   </div>
 @endsection
+
+@push('scripts')
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('edit-event-form');
+      const submitButton = document.getElementById('submit-button');
+
+      form.addEventListener('submit', function() {
+        submitButton.disabled = true;
+        submitButton.innerText = 'Updating...';
+        submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+      });
+    });
+  </script>
+@endpush
